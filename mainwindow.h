@@ -18,8 +18,12 @@ public:
 
 public slots:
     void onKpCountSpinChanged(int count);
+    void scrollDock          (int value);
+    void resizeEvent         (QResizeEvent *);
 
 private:
+    void resizeScroll        ();
+
     Ui::MainWindow *ui;
 
     int                    m_arcCount;
@@ -27,6 +31,8 @@ private:
     int                    m_kpCount;
     QList<qreal>           m_kpCapacities;
     QList<QDoubleSpinBox*> m_kpCapacitiesSpins;
+
+    int                    m_scrollValue;
 };
 
 #endif // MAINWINDOW_H
