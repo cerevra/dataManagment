@@ -8,6 +8,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow  (parent            )
     , ui           (new Ui::MainWindow)
+    , m_kpCount    (0                 )
     , m_scrollValue(0                 )
 {
     ui->setupUi(this);
@@ -30,22 +31,26 @@ MainWindow::~MainWindow()
 
 void MainWindow::onKpCountSpinChanged(int count)
 {
-    m_kpCount = count;
-
-    for(int i = 0; i < m_kpCapacitiesSpins.size(); ++i)
+    if (count < m_kpCount)
     {
-        QDoubleSpinBox* spinBox = m_kpCapacitiesSpins[i];
-        ui->formLayout->labelForField(spinBox)->deleteLater();
-        spinBox->deleteLater();
+        for(int i = m_kpCount - 1; i > count - 1; --i)
+        {
+            QDoubleSpinBox* spinBox = m_kpCapacitiesSpins[i];
+            ui->formLayout->labelForField(spinBox)->deleteLater();
+            spinBox->deleteLater();
+            m_kpCapacitiesSpins.removeAt(i);
+        }
     }
-    m_kpCapacitiesSpins.clear();
-
-    for(int i = 0; i < count; ++i)
+    else if (count > m_kpCount)
     {
-        QDoubleSpinBox* spinBox = new QDoubleSpinBox();
-        spinBox->setValue(2);
-        ui->formLayout->addRow(QString("№%1").arg(i+1),spinBox);
-        m_kpCapacitiesSpins.append(spinBox);
+        for(int i = m_kpCount; i < count; ++i)
+        {
+            QDoubleSpinBox* spinBox = new QDoubleSpinBox(this);
+            spinBox->setValue  (2);
+            spinBox->setMinimum(0);
+            ui->formLayout->addRow(QString("№%1").arg(i+1),spinBox);
+            m_kpCapacitiesSpins.append(spinBox);
+        }
     }
 
     QRect geometry = ui->widget_kpCapacities->geometry();
@@ -56,6 +61,8 @@ void MainWindow::onKpCountSpinChanged(int count)
                      + ui->formLayout     ->verticalSpacing())*count
                      + 20 // из-за разницы размеров виджета и formLayout
                                        )));
+
+    m_kpCount = count;
 
     resizeScroll();
 }
