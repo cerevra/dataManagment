@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    calcalg.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    calcalg.h
 
 FORMS    += mainwindow.ui
