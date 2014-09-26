@@ -1,6 +1,7 @@
 
 #include <QLabel>
 #include <QRect>
+#include <QScopedPointer>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -44,7 +45,6 @@ MainWindow::~MainWindow()
         QDoubleSpinBox* spinBox = m_kpCapacitiesSpins[i];
         ui->formLayout->labelForField(spinBox)->deleteLater();
         spinBox->deleteLater();
-        m_kpCapacitiesSpins.removeAt(i);
     }
 
     for(int i = 0; i < m_algoritms.size(); ++i)
@@ -107,15 +107,15 @@ void MainWindow::resizeEvent(QResizeEvent *)
 
 void MainWindow::calculate()
 {
-    Calculator*   calc = m_algoritms[ui->comboBox->currentIndex()];
+    QScopedPointer<Calculator> calc(m_algoritms[ui->comboBox->currentIndex()]->clone());
     QList<double> kpCapacities;
 
     for(int i = 0; i < m_kpCount; ++i)
         kpCapacities.append(m_kpCapacitiesSpins[i]->value());
 
-    Solution sol = calc->calc(ui->spinBox_arcCount         ->value(),
-                              ui->doubleSpinBox_arcCapacity->value(),
-                              kpCapacities);
+    const Solution& sol = calc->calc(ui->spinBox_arcCount         ->value(),
+                                     ui->doubleSpinBox_arcCapacity->value(),
+                                     kpCapacities);
 
     QBrush greenBrush  (Qt::green);
     QBrush blueBrush   (Qt::blue );

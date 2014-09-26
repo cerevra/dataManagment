@@ -5,7 +5,7 @@
 #include <QDoubleSpinBox>
 #include <QGraphicsView>
 
-#include "calcalg.h"
+#include "calcuniform.h"
 
 namespace Ui {
 class MainWindow;
