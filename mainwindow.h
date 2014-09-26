@@ -32,17 +32,14 @@ private:
 
     Ui::MainWindow *ui;
 
-    int                    m_arcCount;
-    qreal                  m_arcCapacity;
     int                    m_kpCount;
-    QList<qreal>           m_kpCapacities;
     QList<QDoubleSpinBox*> m_kpCapacitiesSpins;
 
     int                    m_scrollValue;
 
     QGraphicsScene *       m_scene;
 
-    QVector<CalcAlg*>      m_algoritms;
+    QVector<Calculator*>   m_algoritms;
 };
 
 #endif // MAINWINDOW_H

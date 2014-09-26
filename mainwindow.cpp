@@ -31,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->comboBox         , SIGNAL(currentIndexChanged(int)),
             this                 , SLOT  (displayBrief(int)));
-
     for (int i = 0; i < m_algoritms.size(); ++i)
     {
         ui->comboBox->addItem(m_algoritms[i]->name(), i);
@@ -40,7 +39,21 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    for(int i = 0; i < m_kpCount; ++i)
+    {
+        QDoubleSpinBox* spinBox = m_kpCapacitiesSpins[i];
+        ui->formLayout->labelForField(spinBox)->deleteLater();
+        spinBox->deleteLater();
+        m_kpCapacitiesSpins.removeAt(i);
+    }
+
+    for(int i = 0; i < m_algoritms.size(); ++i)
+    {
+        delete m_algoritms[i];
+    }
+
     delete ui;
+    delete m_scene;
 }
 
 void MainWindow::onKpCountSpinChanged(int count)
@@ -94,16 +107,22 @@ void MainWindow::resizeEvent(QResizeEvent *)
 
 void MainWindow::calculate()
 {
-//    Calculator calc();
+    Calculator*   calc = m_algoritms[ui->comboBox->currentIndex()];
+    QList<double> kpCapacities;
 
+    for(int i = 0; i < m_kpCount; ++i)
+        kpCapacities.append(m_kpCapacitiesSpins[i]->value());
 
-    QBrush greenBrush(Qt::green);
-    QBrush blueBrush(Qt::blue);
-    QPen outlinePen(Qt::black);
+    Solution sol = calc->calc(ui->spinBox_arcCount         ->value(),
+                              ui->doubleSpinBox_arcCapacity->value(),
+                              kpCapacities);
+
+    QBrush greenBrush  (Qt::green);
+    QBrush blueBrush   (Qt::blue );
+    QPen   outlinePen  (Qt::black);
     outlinePen.setWidth(2);
 
     QGraphicsRectItem *rectangle = m_scene->addRect(100, 0, 80, 100, outlinePen, blueBrush);
-
 }
 
 void MainWindow::displayBrief(int index)

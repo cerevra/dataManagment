@@ -14,7 +14,8 @@ QString CalcUniform::brief()
                    );
 }
 
-void CalcUniform::calc()
+const Solution &CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCapacities)
 {
-
+    int i = 0 ;
+    return Solution();
 }
