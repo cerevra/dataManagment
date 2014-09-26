@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_kpCount    (0                       )
     , m_scrollValue(0                       )
     , m_scene      (new QGraphicsScene(this))
+    , m_sol        (nullptr                 )
 {
     ui->setupUi(this);
 
@@ -54,6 +55,7 @@ MainWindow::~MainWindow()
 
     delete ui;
     delete m_scene;
+    delete m_sol;
 }
 
 void MainWindow::onKpCountSpinChanged(int count)
@@ -103,6 +105,8 @@ void MainWindow::scrollDock(int value)
 void MainWindow::resizeEvent(QResizeEvent *)
 {
     resizeScroll();
+
+    draw();
 }
 
 void MainWindow::calculate()
@@ -113,16 +117,11 @@ void MainWindow::calculate()
     for(int i = 0; i < m_kpCount; ++i)
         kpCapacities.append(m_kpCapacitiesSpins[i]->value());
 
-    const Solution& sol = calc->calc(ui->spinBox_arcCount         ->value(),
-                                     ui->doubleSpinBox_arcCapacity->value(),
-                                     kpCapacities);
+    m_sol = calc->calc(ui->spinBox_arcCount         ->value(),
+                       ui->doubleSpinBox_arcCapacity->value(),
+                       kpCapacities);
 
-    QBrush greenBrush  (Qt::green);
-    QBrush blueBrush   (Qt::blue );
-    QPen   outlinePen  (Qt::black);
-    outlinePen.setWidth(2);
-
-    QGraphicsRectItem *rectangle = m_scene->addRect(100, 0, 80, 100, outlinePen, blueBrush);
+    draw();
 }
 
 void MainWindow::displayBrief(int index)
@@ -141,4 +140,14 @@ void MainWindow::resizeScroll()
         max = 0;
 
     ui->verticalScrollBar->setMaximum(max);
+}
+
+void MainWindow::draw()
+{
+    QBrush greenBrush  (Qt::green);
+    QBrush blueBrush   (Qt::blue );
+    QPen   outlinePen  (Qt::black);
+    outlinePen.setWidth(2);
+
+    QGraphicsRectItem *rectangle = m_scene->addRect(100, 0, 80, 100, outlinePen, blueBrush);
 }

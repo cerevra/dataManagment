@@ -33,7 +33,10 @@ public:
     virtual QString  brief   () = 0;
     virtual Calculator* clone() = 0;
 
-    virtual Solution calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities) = 0;
+    virtual Solution* calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities) = 0;
+
+protected:
+    Solution* m_sol;
 };
 
 #endif // CALCALG_H

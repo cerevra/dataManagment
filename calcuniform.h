@@ -17,12 +17,11 @@ public:
     QString  brief   ();
     Calculator* clone();
 
-    Solution calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities);
+    Solution* calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities);
 
 private:
     bool routine  (Bank& bank);
 
-    Solution m_sol;
     Ordered  m_orderedCapacities;
     double   m_arcCapacity;
 };

@@ -29,6 +29,7 @@ public slots:
 
 private:
     void resizeScroll        ();
+    void draw                ();
 
     Ui::MainWindow *ui;
 
@@ -40,6 +41,7 @@ private:
     QGraphicsScene *       m_scene;
 
     QVector<Calculator*>   m_algoritms;
+    Solution*              m_sol;
 };
 
 #endif // MAINWINDOW_H

@@ -3,6 +3,7 @@
 CalcUniform::CalcUniform()
     : m_arcCapacity(0)
 {
+    m_sol = new Solution;
 }
 
 QString CalcUniform::name()
@@ -24,9 +25,9 @@ Calculator *CalcUniform::clone()
     return new CalcUniform();
 }
 
-Solution CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCapacities)
+Solution* CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCapacities)
 {
-    m_sol.resize(arcCount);
+    m_sol->resize(arcCount);
     m_arcCapacity = arcCapacity;
 
     //сортировка
@@ -43,13 +44,13 @@ Solution CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCap
             bool result = false;
             for (int i = 0; i < arcCount; ++i)
             {
-                if (routine(m_sol[i]))
+                if (routine((*m_sol)[i]))
                     result = true;
             }
 
             for (int i = arcCount-1; i >= 0; --i)
             {
-                if (routine(m_sol[i]))
+                if (routine((*m_sol)[i]))
                     result = true;
             }
 
@@ -64,11 +65,11 @@ Solution CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCap
     // если не для всех узлов нашлось место
     if (m_orderedCapacities.size())
     {
-        m_sol.append(Bank());
+        m_sol->append(Bank());
         for (int i = 0; i < m_orderedCapacities.size(); ++i)
         {
             double capacity = m_orderedCapacities.lastKey();
-            m_sol              .last  ().append(m_orderedCapacities.last(), capacity);
+            m_sol->last().append(m_orderedCapacities.last(), capacity);
             m_orderedCapacities.remove(capacity);
         }
     }
