@@ -3,11 +3,13 @@
 
 #include <QString>
 
-class CalcAlg
+// паттерн Strategy
+
+class Calculator
 {
 public:
-    CalcAlg();
-    virtual ~CalcAlg() {}
+    Calculator() {}
+    virtual ~Calculator() {}
 
     virtual QString name () = 0;
     virtual QString brief() = 0;
@@ -15,32 +17,16 @@ public:
     virtual void    calc () = 0;
 };
 
-class CalcUniform : public CalcAlg
+class CalcUniform : public Calculator
 {
 public:
-    CalcUniform();
-    ~CalcUniform() {}
+    CalcUniform  () {}
+    ~CalcUniform () {}
 
     QString name ();
     QString brief();
 
     void    calc ();
-};
-
-class Calculator
-{
-public:
-    Calculator(CalcAlg* alg)
-        : m_alg(alg)
-    {}
-
-    void calc()
-    {
-        m_alg->calc();
-    }
-
-private:
-    CalcAlg* m_alg;
 };
 
 #endif // CALCALG_H
