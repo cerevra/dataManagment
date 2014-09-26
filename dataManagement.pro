@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    calcalg.cpp
+    calcalg.cpp \
+    calcuniform.cpp
 
 HEADERS  += mainwindow.h \
-    calcalg.h
+    calcalg.h \
+    calcuniform.h
 
 FORMS    += mainwindow.ui

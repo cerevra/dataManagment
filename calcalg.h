@@ -4,32 +4,36 @@
 #include <QString>
 #include <QVector>
 
+typedef QVector<int> Units;
+
+class Bank
+{
+public:
+    Bank();
+
+    void         append(int unitNo, double unitSize);
+
+    const Units* units ();
+
+private:
+    int   m_size;
+    Units m_units;
+};
+
 // паттерн Strategy
-typedef QVector<int>  Bank;
 typedef QVector<Bank> Solution;
 
 class Calculator
 {
 public:
-    Calculator           () {}
-    virtual ~Calculator  () {}
+    Calculator               () {}
+    virtual ~Calculator      () {}
 
-    virtual QString name () = 0;
-    virtual QString brief() = 0;
+    virtual QString  name    () = 0;
+    virtual QString  brief   () = 0;
+    virtual Calculator* clone() = 0;
 
-    virtual const Solution& calc (int arcCount, double arcCapacity, const QList<qreal>& kpCapacities) = 0;
-};
-
-class CalcUniform : public Calculator
-{
-public:
-    CalcUniform  () {}
-    ~CalcUniform () {}
-
-    QString name ();
-    QString brief();
-
-    const Solution& calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities);
+    virtual Solution calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities) = 0;
 };
 
 #endif // CALCALG_H

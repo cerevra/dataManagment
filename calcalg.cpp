@@ -1,21 +1,18 @@
+
 #include "calcalg.h"
 
-QString CalcUniform::name()
+Bank::Bank()
+    : m_size(0)
 {
-    return QString("Равномерное распределение");
 }
 
-QString CalcUniform::brief()
+void Bank::append(int unitNo, double unitSize)
 {
-    return QString(
-        "В этом методе на первом этапе происходит сортировка всех КП по объему данных (по возрастанию). "
-        "Затем с конца списка по очереди в хранилища складываются блоки данных. "
-        "Таким образом получается, что в общем и целом данные ложатся в хранилища \"ровным\" слоем."
-                   );
+    m_units.append(unitNo);
+    m_size += unitSize;
 }
 
-const Solution &CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCapacities)
+const Units *Bank::units()
 {
-    int i = 0 ;
-    return Solution();
+    return &m_units;
 }
