@@ -6,22 +6,36 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow  (parent            )
-    , ui           (new Ui::MainWindow)
-    , m_kpCount    (0                 )
-    , m_scrollValue(0                 )
+    : QMainWindow  (parent                  )
+    , ui           (new Ui::MainWindow      )
+    , m_kpCount    (0                       )
+    , m_scrollValue(0                       )
+    , m_scene      (new QGraphicsScene(this))
 {
     ui->setupUi(this);
 
+    // !!! Здесь добавляем в использование свой алгоритм !!!
+    m_algoritms.append(new CalcUniform());
+    //m_algoritms.append(new yourCalc());
+
     onKpCountSpinChanged(ui->spinBox_kpCount->value());
-
-    connect(ui->spinBox_kpCount, SIGNAL(valueChanged        (int)) ,
-            this               , SLOT  (onKpCountSpinChanged(int)));
-
+    connect(ui->spinBox_kpCount  , SIGNAL(valueChanged        (int)) ,
+            this                 , SLOT  (onKpCountSpinChanged(int)));
     connect(ui->verticalScrollBar, SIGNAL(valueChanged(int)),
             this                 , SLOT  (scrollDock  (int)));
-    ui->verticalScrollBar->setMinimum(0);
-    ui->verticalScrollBar->setMaximum(0);
+
+    connect(ui->pushButton       , SIGNAL(clicked  ()),
+            this                 , SLOT  (calculate()));
+
+    ui->graphicsView->setScene(m_scene);
+
+    connect(ui->comboBox         , SIGNAL(currentIndexChanged(int)),
+            this                 , SLOT  (displayBrief(int)));
+
+    for (int i = 0; i < m_algoritms.size(); ++i)
+    {
+        ui->comboBox->addItem(m_algoritms[i]->name(), i);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -47,7 +61,7 @@ void MainWindow::onKpCountSpinChanged(int count)
         {
             QDoubleSpinBox* spinBox = new QDoubleSpinBox(this);
             spinBox->setValue  (2);
-            spinBox->setMinimum(0);
+            spinBox->setMinimum(0.01);
             ui->formLayout->addRow(QString("№%1").arg(i+1),spinBox);
             m_kpCapacitiesSpins.append(spinBox);
         }
@@ -76,6 +90,26 @@ void MainWindow::scrollDock(int value)
 void MainWindow::resizeEvent(QResizeEvent *)
 {
     resizeScroll();
+}
+
+void MainWindow::calculate()
+{
+//    Calculator calc();
+
+
+    QBrush greenBrush(Qt::green);
+    QBrush blueBrush(Qt::blue);
+    QPen outlinePen(Qt::black);
+    outlinePen.setWidth(2);
+
+    QGraphicsRectItem *rectangle = m_scene->addRect(100, 0, 80, 100, outlinePen, blueBrush);
+
+}
+
+void MainWindow::displayBrief(int index)
+{
+    ui->plainTextEdit->clear();
+    ui->plainTextEdit->insertPlainText(m_algoritms[index]->brief());
 }
 
 void MainWindow::resizeScroll()
