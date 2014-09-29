@@ -42,6 +42,8 @@ private:
 
     QVector<Calculator*>   m_algoritms;
     Solution*              m_sol;
+
+    static const QString   m_bankName;
 };
 
 #endif // MAINWINDOW_H

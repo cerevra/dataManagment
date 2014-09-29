@@ -6,6 +6,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+const QString MainWindow::m_bankName = "Хранилище №";
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow  (parent                  )
     , ui           (new Ui::MainWindow      )
@@ -144,10 +146,19 @@ void MainWindow::resizeScroll()
 
 void MainWindow::draw()
 {
-    QBrush greenBrush  (Qt::green);
-    QBrush blueBrush   (Qt::blue );
-    QPen   outlinePen  (Qt::black);
-    outlinePen.setWidth(2);
+    if (m_sol)
+    {
+        int bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
+                                                       .arg(m_bankName)
+                                                       .arg(ui->spinBox_arcCount->value()));
 
-    QGraphicsRectItem *rectangle = m_scene->addRect(100, 0, 80, 100, outlinePen, blueBrush);
+        for (int i = 0; i < m_sol->size(); ++i)
+        {
+
+            QPen   outlinePen  (Qt::black);
+            outlinePen.setWidth(2);
+
+            m_scene->addRect(100, 0, 80, 100, outlinePen);
+        }
+    }
 }
