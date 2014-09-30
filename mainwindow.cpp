@@ -152,12 +152,11 @@ void MainWindow::draw()
     const QPen penYellow(Qt::yellow);
 
     const int bankRectHeigth = 56;
-    const int rectHeigth = 50;
     const int bankMargin = 25;
     const int fontHeigth = 8;
     const int fontMargin = 10;
     const int unitLabelHeigth = fontHeigth + 2*fontMargin;
-    const int period     = rectHeigth + bankMargin + unitLabelHeigth;
+    const int period     = bankRectHeigth + bankMargin + unitLabelHeigth;
 
     int bankCount     = ui->spinBox_arcCount->value();
     int bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
@@ -174,7 +173,9 @@ void MainWindow::draw()
 
         for (int i = 0; i < m_sol->size(); ++i)
         {
-            double usage = m_sol->at(i).size()/ui->doubleSpinBox_arcCapacity->value();
+            double bankSize    = m_sol->at(i).size();
+            double bankMaxSize = ui->doubleSpinBox_arcCapacity->value();
+            double usage = bankSize/bankMaxSize;
 
             QPen* outlinePen;
 
@@ -191,19 +192,41 @@ void MainWindow::draw()
             QGraphicsTextItem* bankLabel = m_scene->addText(QString("%1%2")
                                                             .arg(m_bankName)
                                                             .arg(i+1));
-            QGraphicsTextItem* bankUsage = m_scene->addText(QString("%1%")
-                                                            .arg(usage*100,0,'g',3));
-            int topMargin = i*period;
-            bankLabel->setPos (fontMargin    , unitLabelHeigth + topMargin);
-            bankUsage->setPos (fontMargin    , unitLabelHeigth + topMargin + fontHeigth + fontMargin);
-            m_scene  ->addRect(bankRectMargin, unitLabelHeigth + topMargin,
+            QGraphicsTextItem* bankUsage = m_scene->addText(QString("%1%\n%2/%3")
+                                                            .arg(usage*100  , 0, 'g', 3)
+                                                            .arg(bankSize   , 0, 'g', 4)
+                                                            .arg(bankMaxSize, 0, 'g', 4));
+            int topMargin = unitLabelHeigth + i*period;
+            bankLabel->setPos (fontMargin    , topMargin);
+            bankUsage->setPos (fontMargin    , topMargin + fontHeigth + fontMargin);
+            m_scene  ->addRect(bankRectMargin, topMargin,
                                bankRectWidth , bankRectHeigth, *outlinePen);
 
             // Блоки данных
+            int rectHeigth   = bankRectHeigth - 4*outlinePen->width();
+            int allowedWidth = bankRectWidth  - 4*outlinePen->width();
+
+            int xOffset = bankRectMargin;
             const Units* units = m_sol->at(i).units();
             for (int k = 0; k < units->size(); ++k)
             {
+                int yOffset;
+                if (k%2)
+                {
+                    yOffset = topMargin - (fontHeigth + fontMargin);
+                }
+                else
+                {
+                    yOffset = topMargin + bankRectHeigth + fontMargin;
+                }
 
+//                int unitWidth = ;
+
+                xOffset;
+
+                QGraphicsTextItem* unitLabel = m_scene->addText(QString("№%1")
+                                                                .arg(units->at(k)));
+                bankLabel->setPos(fontMargin, yOffset);
             }
         }
     }
