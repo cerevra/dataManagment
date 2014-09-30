@@ -2,6 +2,7 @@
 #include <QLabel>
 #include <QRect>
 #include <QScopedPointer>
+#include <QGraphicsTextItem>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -146,19 +147,64 @@ void MainWindow::resizeScroll()
 
 void MainWindow::draw()
 {
+    const QPen penBlack (Qt::black );
+    const QPen penRed   (Qt::red   );
+    const QPen penYellow(Qt::yellow);
+
+    const int bankRectHeigth = 56;
+    const int rectHeigth = 50;
+    const int bankMargin = 25;
+    const int fontHeigth = 8;
+    const int fontMargin = 10;
+    const int unitLabelHeigth = fontHeigth + 2*fontMargin;
+    const int period     = rectHeigth + bankMargin + unitLabelHeigth;
+
+    int bankCount     = ui->spinBox_arcCount->value();
+    int bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
+                                                   .arg(m_bankName)
+                                                   .arg(bankCount));
+
+    int sceneWidth     = ui->graphicsView->width();
+    int bankRectMargin = bankNameWidth + 2*fontMargin;
+    int bankRectWidth  = sceneWidth - (bankNameWidth + 2*fontMargin) - 10;
+
     if (m_sol)
     {
-        int bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
-                                                       .arg(m_bankName)
-                                                       .arg(ui->spinBox_arcCount->value()));
+        m_scene->clear();
 
         for (int i = 0; i < m_sol->size(); ++i)
         {
+            double usage = m_sol->at(i).size()/ui->doubleSpinBox_arcCapacity->value();
 
-            QPen   outlinePen  (Qt::black);
-            outlinePen.setWidth(2);
+            QPen* outlinePen;
 
-            m_scene->addRect(100, 0, 80, 100, outlinePen);
+            if (i >= bankCount || usage >= 1.0)
+                outlinePen = new QPen(penRed   );
+            else if (usage > 0.9 && usage < 1.0)
+                outlinePen = new QPen(penYellow);
+            else
+                outlinePen = new QPen(penBlack );
+
+            outlinePen->setWidth(2);
+
+            // Хранилище
+            QGraphicsTextItem* bankLabel = m_scene->addText(QString("%1%2")
+                                                            .arg(m_bankName)
+                                                            .arg(i+1));
+            QGraphicsTextItem* bankUsage = m_scene->addText(QString("%1%")
+                                                            .arg(usage*100,0,'g',3));
+            int topMargin = i*period;
+            bankLabel->setPos (fontMargin    , unitLabelHeigth + topMargin);
+            bankUsage->setPos (fontMargin    , unitLabelHeigth + topMargin + fontHeigth + fontMargin);
+            m_scene  ->addRect(bankRectMargin, unitLabelHeigth + topMargin,
+                               bankRectWidth , bankRectHeigth, *outlinePen);
+
+            // Блоки данных
+            const Units* units = m_sol->at(i).units();
+            for (int k = 0; k < units->size(); ++k)
+            {
+
+            }
         }
     }
 }

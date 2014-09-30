@@ -13,7 +13,8 @@ public:
 
     void         append(int unitNo, double unitSize);
 
-    const Units* units ();
+    const Units* units () const;
+    int          size  () const;
 
 private:
     int   m_size;
