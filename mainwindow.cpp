@@ -158,6 +158,7 @@ void MainWindow::draw()
     const int unitLabelHeigth = fontHeigth + 2*fontMargin;
     const int period     = bankRectHeigth + bankMargin + unitLabelHeigth;
 
+    double bankCapacity= ui->doubleSpinBox_arcCapacity->value();
     int bankCount     = ui->spinBox_arcCount->value();
     int bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
                                                    .arg(m_bankName)
@@ -171,15 +172,15 @@ void MainWindow::draw()
     {
         m_scene->clear();
 
-        for (int i = 0; i < m_sol->size(); ++i)
+        for (int bankIdx = 0; bankIdx < m_sol->size(); ++bankIdx)
         {
-            double bankSize    = m_sol->at(i).size();
+            double bankSize    = m_sol->at(bankIdx).size();
             double bankMaxSize = ui->doubleSpinBox_arcCapacity->value();
             double usage = bankSize/bankMaxSize;
 
             QPen* outlinePen;
 
-            if (i >= bankCount || usage >= 1.0)
+            if (bankIdx >= bankCount || usage >= 1.0)
                 outlinePen = new QPen(penRed   );
             else if (usage > 0.9 && usage < 1.0)
                 outlinePen = new QPen(penYellow);
@@ -191,15 +192,15 @@ void MainWindow::draw()
             // Хранилище
             QGraphicsTextItem* bankLabel = m_scene->addText(QString("%1%2")
                                                             .arg(m_bankName)
-                                                            .arg(i+1));
+                                                            .arg(bankIdx+1));
             QGraphicsTextItem* bankUsage = m_scene->addText(QString("%1%\n%2/%3")
                                                             .arg(usage*100  , 0, 'g', 3)
                                                             .arg(bankSize   , 0, 'g', 4)
                                                             .arg(bankMaxSize, 0, 'g', 4));
-            int topMargin = unitLabelHeigth + i*period;
-            bankLabel->setPos (fontMargin    , topMargin);
-            bankUsage->setPos (fontMargin    , topMargin + fontHeigth + fontMargin);
-            m_scene  ->addRect(bankRectMargin, topMargin,
+            int topOffset = unitLabelHeigth + bankIdx*period;
+            bankLabel->setPos (fontMargin    , topOffset);
+            bankUsage->setPos (fontMargin    , topOffset + fontHeigth + fontMargin);
+            m_scene  ->addRect(bankRectMargin, topOffset,
                                bankRectWidth , bankRectHeigth, *outlinePen);
 
             // Блоки данных
@@ -207,26 +208,31 @@ void MainWindow::draw()
             int allowedWidth = bankRectWidth  - 4*outlinePen->width();
 
             int xOffset = bankRectMargin;
-            const Units* units = m_sol->at(i).units();
-            for (int k = 0; k < units->size(); ++k)
+            const Units* units = m_sol->at(bankIdx).units();
+            for (int unitIdx = 0; unitIdx < units->size(); ++unitIdx)
             {
+                int unitNo = units->at(unitIdx);
                 int yOffset;
-                if (k%2)
+                if (unitIdx%2)
                 {
-                    yOffset = topMargin - (fontHeigth + fontMargin);
+                    yOffset = topOffset - (fontHeigth + fontMargin);
                 }
                 else
                 {
-                    yOffset = topMargin + bankRectHeigth + fontMargin;
+                    yOffset = topOffset + bankRectHeigth + fontMargin;
                 }
 
-//                int unitWidth = ;
+                double rectUnitWidth = m_kpCapacitiesSpins.at(unitNo)->value()*
+                                       allowedWidth/
+                                       bankCapacity;
 
-                xOffset;
+                m_scene->addRect(xOffset      , topOffset,
+                                 rectUnitWidth, rectHeigth, penBlack);
 
                 QGraphicsTextItem* unitLabel = m_scene->addText(QString("№%1")
-                                                                .arg(units->at(k)));
-                bankLabel->setPos(fontMargin, yOffset);
+                                                                .arg(unitNo));
+                unitLabel->setPos(xOffset + rectUnitWidth/2, yOffset);
+                xOffset += rectUnitWidth;
             }
         }
     }
