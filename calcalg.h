@@ -30,11 +30,13 @@ public:
     Calculator               () {}
     virtual ~Calculator      () {}
 
-    virtual QString  name    () = 0;
-    virtual QString  brief   () = 0;
+    virtual QString     name () = 0;
+    virtual QString     brief() = 0;
     virtual Calculator* clone() = 0;
 
-    virtual Solution* calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities) = 0;
+    virtual Solution*   calc (int arcCount,
+                              double arcCapacity,
+                              QList<qreal>& kpCapacities) = 0;
 
 protected:
     Solution* m_sol;
