@@ -44,6 +44,38 @@ private:
     Solution*              m_sol;
 
     static const QString   m_bankName;
+
+    struct Paint
+    {
+        Paint()
+            : penBlack (Qt::black )
+            , penRed   (Qt::red   )
+            , penYellow(Qt::yellow)
+        {
+            unitLabelHeigth = fontHeigth     + fontMargin*2;
+            period          = bankRectHeigth + bankMargin + unitLabelHeigth;
+
+            unitRectHeigth  = bankRectHeigth - unitRectYOffset*2
+                                             - lineWidthThin;
+        }
+
+        QPen penBlack;
+        QPen penRed;
+        QPen penYellow;
+
+        const int bankRectHeigth  = 57;
+        const int bankMargin      = 25;
+        const int fontHeigth      = 8;
+        const int fontMargin      = 10;
+        const int lineWidthWide   = 2;
+        const int lineWidthThin   = 1;
+        const int unitRectYOffset = 2;
+        const int unitRectXOffset = 2;
+        int unitLabelHeigth;
+        int period;
+        int unitRectHeigth;
+    };
+    Paint m_pnt;
 };
 
 #endif // MAINWINDOW_H

@@ -147,93 +147,84 @@ void MainWindow::resizeScroll()
 
 void MainWindow::draw()
 {
-    const QPen penBlack (Qt::black );
-    const QPen penRed   (Qt::red   );
-    const QPen penYellow(Qt::yellow);
+    if (!m_sol)
+        return;
 
-    const int bankRectHeigth = 56;
-    const int bankMargin = 25;
-    const int fontHeigth = 8;
-    const int fontMargin = 10;
-    const int unitLabelHeigth = fontHeigth + 2*fontMargin;
-    const int period     = bankRectHeigth + bankMargin + unitLabelHeigth;
+    m_scene->clear();
 
-    double bankCapacity= ui->doubleSpinBox_arcCapacity->value();
-    int bankCount     = ui->spinBox_arcCount->value();
-    int bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
+    double bankCapacity  = ui->doubleSpinBox_arcCapacity->value();
+    int    bankCount     = ui->spinBox_arcCount         ->value();
+    int    bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
                                                    .arg(m_bankName)
                                                    .arg(bankCount));
 
-    int sceneWidth     = ui->graphicsView->width();
-    int bankRectMargin = bankNameWidth + 2*fontMargin;
-    int bankRectWidth  = sceneWidth - (bankNameWidth + 2*fontMargin) - 10;
+    int bankRectOffset   = bankNameWidth + 2*m_pnt.fontMargin;
+    int bankRectWidth    = ui->graphicsView->width() - (bankNameWidth + 3*m_pnt.fontMargin);
+    int allowedUnitWidth = bankRectWidth - 2*m_pnt.lineWidthWide;
 
-    if (m_sol)
+    for (int bankIdx = 0; bankIdx < m_sol->size(); ++bankIdx)
     {
-        m_scene->clear();
+        double bankSize    = m_sol->at(bankIdx).size();
+        double bankMaxSize = ui->doubleSpinBox_arcCapacity->value();
+        double usage       = bankSize/bankMaxSize;
 
-        for (int bankIdx = 0; bankIdx < m_sol->size(); ++bankIdx)
+        QPen* outlinePen;
+
+        if (bankIdx >= bankCount || usage >= 1.0)
+            outlinePen = &m_pnt.penRed;
+        else if (usage > 0.9 && usage < 1.0)
+            outlinePen = &m_pnt.penYellow;
+        else
+            outlinePen = &m_pnt.penBlack;
+
+        outlinePen->setWidth(m_pnt.lineWidthWide);
+
+        // Хранилище
+        QGraphicsTextItem* bankLabel = m_scene->addText(QString("%1%2")
+                                                        .arg(m_bankName)
+                                                        .arg(bankIdx+1));
+        QGraphicsTextItem* bankUsage = m_scene->addText(QString("%1%\n%2/%3")
+                                                        .arg(usage*100  , 0, 'g', 3)
+                                                        .arg(bankSize   , 0, 'g', 4)
+                                                        .arg(bankMaxSize, 0, 'g', 4));
+        int yOffset = m_pnt.unitLabelHeigth + bankIdx*m_pnt.period;
+        bankLabel->setPos (m_pnt.fontMargin, yOffset);
+        bankUsage->setPos (m_pnt.fontMargin, yOffset + m_pnt.unitLabelHeigth);
+        m_scene  ->addRect(bankRectOffset, yOffset,
+                           bankRectWidth , m_pnt.bankRectHeigth, *outlinePen);
+
+        // Блоки данных
+        outlinePen->setWidth(m_pnt.lineWidthThin);
+
+        int xOffset = bankRectOffset;
+        const Units* units = m_sol->at(bankIdx).units();
+        for (int unitIdx = 0; unitIdx < units->size(); ++unitIdx)
         {
-            double bankSize    = m_sol->at(bankIdx).size();
-            double bankMaxSize = ui->doubleSpinBox_arcCapacity->value();
-            double usage = bankSize/bankMaxSize;
-
-            QPen* outlinePen;
-
-            if (bankIdx >= bankCount || usage >= 1.0)
-                outlinePen = new QPen(penRed   );
-            else if (usage > 0.9 && usage < 1.0)
-                outlinePen = new QPen(penYellow);
-            else
-                outlinePen = new QPen(penBlack );
-
-            outlinePen->setWidth(2);
-
-            // Хранилище
-            QGraphicsTextItem* bankLabel = m_scene->addText(QString("%1%2")
-                                                            .arg(m_bankName)
-                                                            .arg(bankIdx+1));
-            QGraphicsTextItem* bankUsage = m_scene->addText(QString("%1%\n%2/%3")
-                                                            .arg(usage*100  , 0, 'g', 3)
-                                                            .arg(bankSize   , 0, 'g', 4)
-                                                            .arg(bankMaxSize, 0, 'g', 4));
-            int topOffset = unitLabelHeigth + bankIdx*period;
-            bankLabel->setPos (fontMargin    , topOffset);
-            bankUsage->setPos (fontMargin    , topOffset + fontHeigth + fontMargin);
-            m_scene  ->addRect(bankRectMargin, topOffset,
-                               bankRectWidth , bankRectHeigth, *outlinePen);
-
-            // Блоки данных
-            int rectHeigth   = bankRectHeigth - 4*outlinePen->width();
-            int allowedWidth = bankRectWidth  - 4*outlinePen->width();
-
-            int xOffset = bankRectMargin;
-            const Units* units = m_sol->at(bankIdx).units();
-            for (int unitIdx = 0; unitIdx < units->size(); ++unitIdx)
+            int unitNo = units->at(unitIdx);
+            int unitLableOffset;
+            if (unitIdx%2)
             {
-                int unitNo = units->at(unitIdx);
-                int yOffset;
-                if (unitIdx%2)
-                {
-                    yOffset = topOffset - (fontHeigth + fontMargin);
-                }
-                else
-                {
-                    yOffset = topOffset + bankRectHeigth + fontMargin;
-                }
-
-                double rectUnitWidth = m_kpCapacitiesSpins.at(unitNo)->value()*
-                                       allowedWidth/
-                                       bankCapacity;
-
-                m_scene->addRect(xOffset      , topOffset,
-                                 rectUnitWidth, rectHeigth, penBlack);
-
-                QGraphicsTextItem* unitLabel = m_scene->addText(QString("№%1")
-                                                                .arg(unitNo));
-                unitLabel->setPos(xOffset + rectUnitWidth/2, yOffset);
-                xOffset += rectUnitWidth;
+                unitLableOffset = yOffset + m_pnt.bankRectHeigth + m_pnt.fontMargin;
             }
+            else
+            {
+                unitLableOffset = yOffset - (m_pnt.fontHeigth + m_pnt.fontMargin);
+            }
+
+            double unitRectWidth = m_kpCapacitiesSpins.at(unitNo)->value()*
+                                   allowedUnitWidth/
+                                   bankCapacity;
+
+            m_scene->addRect(xOffset + m_pnt.unitRectXOffset,
+                             yOffset + m_pnt.unitRectYOffset,
+                             unitRectWidth - m_pnt.unitRectXOffset,
+                             m_pnt.unitRectHeigth,
+                             m_pnt.penBlack);
+
+            QGraphicsTextItem* unitLabel = m_scene->addText(QString("№%1")
+                                                            .arg(unitNo));
+            unitLabel->setPos(xOffset + unitRectWidth/2, unitLableOffset);
+            xOffset += unitRectWidth;
         }
     }
 }
