@@ -66,12 +66,19 @@ Solution* CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCa
     // если не для всех узлов нашлось место
     if (m_orderedCapacities.size())
     {
-        m_sol->append(Bank());
-        for (int i = 0; i < m_orderedCapacities.size(); ++i)
+        Bank* bank = &m_sol->last();
+        while(m_orderedCapacities.size())
         {
             double capacity = m_orderedCapacities.lastKey();
-            m_sol->last().append(m_orderedCapacities.last(), capacity);
-            m_orderedCapacities.remove(capacity);
+            if (bank->size() + capacity >= m_arcCapacity)
+            {
+                m_sol->append(Bank());
+                bank = &m_sol->last();
+            }
+
+            int unitNo = m_orderedCapacities.last();
+            bank->append(unitNo, capacity);
+            m_orderedCapacities.remove(capacity, unitNo);
         }
     }
 
@@ -82,10 +89,10 @@ bool CalcUniform::routine(Bank &bank)
 {
     if (m_orderedCapacities.size())
     {
-        if (bank.units()->size() < m_arcCapacity)
+        double capacity = m_orderedCapacities.lastKey();
+        if (bank.size() + capacity < m_arcCapacity)
         {
-            double capacity = m_orderedCapacities.lastKey();
-            int    unitNo   = m_orderedCapacities.last   ();
+            int unitNo = m_orderedCapacities.last();
             bank.append(unitNo, capacity);
             m_orderedCapacities.remove(capacity, unitNo);
             return true;
