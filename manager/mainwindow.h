@@ -5,7 +5,7 @@
 #include <QDoubleSpinBox>
 #include <QGraphicsView>
 
-#include "calcuniform.h"
+#include "calcalg.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +30,8 @@ public slots:
 private:
     void resizeScroll        ();
     void draw                ();
+
+    void loadPlugins         ();
 
     Ui::MainWindow *ui;
 
