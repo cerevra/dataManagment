@@ -12,7 +12,12 @@ void Bank::append(int unitNo, double unitSize)
     m_size += unitSize;
 }
 
-const Units *Bank::units()
+const Units *Bank::units() const
 {
     return &m_units;
+}
+
+int Bank::size() const
+{
+    return m_size;
 }

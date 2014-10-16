@@ -2,9 +2,12 @@
 #include <QLabel>
 #include <QRect>
 #include <QScopedPointer>
+#include <QGraphicsTextItem>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+const QString MainWindow::m_bankName = "Хранилище №";
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow  (parent                  )
@@ -144,10 +147,84 @@ void MainWindow::resizeScroll()
 
 void MainWindow::draw()
 {
-    QBrush greenBrush  (Qt::green);
-    QBrush blueBrush   (Qt::blue );
-    QPen   outlinePen  (Qt::black);
-    outlinePen.setWidth(2);
+    if (!m_sol)
+        return;
 
-    QGraphicsRectItem *rectangle = m_scene->addRect(100, 0, 80, 100, outlinePen, blueBrush);
+    m_scene->clear();
+
+    double bankCapacity  = ui->doubleSpinBox_arcCapacity->value();
+    int    bankCount     = ui->spinBox_arcCount         ->value();
+    int    bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
+                                                   .arg(m_bankName)
+                                                   .arg(bankCount));
+
+    int bankRectOffset   = bankNameWidth + 2*m_pnt.fontMargin;
+    int bankRectWidth    = ui->graphicsView->width() - (bankNameWidth + 3*m_pnt.fontMargin);
+    int allowedUnitWidth = bankRectWidth - 2*m_pnt.lineWidthWide;
+
+    for (int bankIdx = 0; bankIdx < m_sol->size(); ++bankIdx)
+    {
+        double bankSize    = m_sol->at(bankIdx).size();
+        double bankMaxSize = ui->doubleSpinBox_arcCapacity->value();
+        double usage       = bankSize/bankMaxSize;
+
+        QPen* outlinePen;
+
+        if (bankIdx >= bankCount || usage >= 1.0)
+            outlinePen = &m_pnt.penRed;
+        else if (usage > 0.9 && usage < 1.0)
+            outlinePen = &m_pnt.penYellow;
+        else
+            outlinePen = &m_pnt.penBlack;
+
+        outlinePen->setWidth(m_pnt.lineWidthWide);
+
+        // Хранилище
+        QGraphicsTextItem* bankLabel = m_scene->addText(QString("%1%2")
+                                                        .arg(m_bankName)
+                                                        .arg(bankIdx+1));
+        QGraphicsTextItem* bankUsage = m_scene->addText(QString("%1%\n%2/%3")
+                                                        .arg(usage*100  , 0, 'g', 3)
+                                                        .arg(bankSize   , 0, 'g', 4)
+                                                        .arg(bankMaxSize, 0, 'g', 4));
+        int yOffset = m_pnt.unitLabelHeigth + bankIdx*m_pnt.period;
+        bankLabel->setPos (m_pnt.fontMargin, yOffset);
+        bankUsage->setPos (m_pnt.fontMargin, yOffset + m_pnt.unitLabelHeigth);
+        m_scene  ->addRect(bankRectOffset, yOffset,
+                           bankRectWidth , m_pnt.bankRectHeigth, *outlinePen);
+
+        // Блоки данных
+        outlinePen->setWidth(m_pnt.lineWidthThin);
+
+        int xOffset = bankRectOffset;
+        const Units* units = m_sol->at(bankIdx).units();
+        for (int unitIdx = 0; unitIdx < units->size(); ++unitIdx)
+        {
+            int unitNo = units->at(unitIdx);
+            int unitLableOffset;
+            if (unitIdx%2)
+            {
+                unitLableOffset = yOffset + m_pnt.bankRectHeigth + m_pnt.fontMargin;
+            }
+            else
+            {
+                unitLableOffset = yOffset - (m_pnt.fontHeigth + m_pnt.fontMargin);
+            }
+
+            double unitRectWidth = m_kpCapacitiesSpins.at(unitNo)->value()*
+                                   allowedUnitWidth/
+                                   bankCapacity;
+
+            m_scene->addRect(xOffset + m_pnt.unitRectXOffset,
+                             yOffset + m_pnt.unitRectYOffset,
+                             unitRectWidth - m_pnt.unitRectXOffset,
+                             m_pnt.unitRectHeigth,
+                             m_pnt.penBlack);
+
+            QGraphicsTextItem* unitLabel = m_scene->addText(QString("№%1")
+                                                            .arg(unitNo));
+            unitLabel->setPos(xOffset + unitRectWidth/2, unitLableOffset);
+            xOffset += unitRectWidth;
+        }
+    }
 }
