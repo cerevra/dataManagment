@@ -14,13 +14,28 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    calcalg.cpp \
-    calcuniform.cpp
+    calcalg.cpp
 
 HEADERS  += mainwindow.h \
     calcalg.h \
-    calcuniform.h
+    iplugin.h
 
 FORMS    += mainwindow.ui
 
 QMAKE_CXXFLAGS += -std=c++0x
+
+
+#target_dll.path =
+
+DIR = $$_PRO_FILE_PWD_/../bin
+CONFIG(debug, debug|release)  {
+    DIR = $$DIR/debug
+}
+else: {
+    DIR = $$DIR/release
+}
+DIR ~= s,/,\\,g
+
+DESTDIR += $$DIR
+
+QMAKE_PRE_LINK  += if not exist $$DIR mkdir $$DIR & if not exist $$DIR exit 1

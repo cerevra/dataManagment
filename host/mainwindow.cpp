@@ -3,7 +3,12 @@
 #include <QRect>
 #include <QScopedPointer>
 #include <QGraphicsTextItem>
+#include <QPluginLoader>
+#include <QStringList>
+#include <QDir>
+#include <QCoreApplication>
 
+#include "iplugin.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -19,9 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // !!! Здесь добавляем в использование свой алгоритм !!!
-    m_algoritms.append(new CalcUniform());
-    //m_algoritms.append(new yourCalc());
+    loadPlugins();
 
     onKpCountSpinChanged(ui->spinBox_kpCount->value());
     connect(ui->spinBox_kpCount  , SIGNAL(valueChanged        (int)) ,
@@ -114,6 +117,9 @@ void MainWindow::resizeEvent(QResizeEvent *)
 
 void MainWindow::calculate()
 {
+    if (!ui->comboBox->count())
+        return;
+
     QScopedPointer<Calculator> calc(m_algoritms[ui->comboBox->currentIndex()]->clone());
     QList<double> kpCapacities;
 
@@ -225,6 +231,22 @@ void MainWindow::draw()
                                                             .arg(unitNo));
             unitLabel->setPos(xOffset + unitRectWidth/2, unitLableOffset);
             xOffset += unitRectWidth;
+        }
+    }
+}
+
+void MainWindow::loadPlugins()
+{
+    QDir          pluginsDir = QDir(qApp->applicationDirPath() + "/plugins");
+    QPluginLoader loader;
+
+    foreach(QString fileName, pluginsDir.entryList(QDir::Files))
+    {
+        loader.setFileName(pluginsDir.absoluteFilePath(fileName));
+        IPlugin* plugin = dynamic_cast<IPlugin*>(loader.instance());
+        foreach(const QString& key, plugin->keys())
+        {
+            m_algoritms.append(plugin->create(key));
         }
     }
 }

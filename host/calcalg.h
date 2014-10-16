@@ -34,8 +34,8 @@ public:
     virtual QString     brief() = 0;
     virtual Calculator* clone() = 0;
 
-    virtual Solution*   calc (int arcCount,
-                              double arcCapacity,
+    virtual Solution*   calc (int           arcCount,
+                              double        arcCapacity,
                               QList<qreal>& kpCapacities) = 0;
 
 protected:
