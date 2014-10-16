@@ -16,11 +16,22 @@ CONFIG -= dll
 
 SOURCES += ../manager/calcalg.cpp
 
-HEADERS += calcalg.h \
-    iplugin.h
+HEADERS += ../manager/calcalg.h \
+           ../manager/iplugin.h
 
 QMAKE_CXXFLAGS += -std=c++0x
 
 INCLUDEPATH += ../manager
 
-DESTDIR += $$_PRO_FILE_PWD_/../lib
+DIR = $$_PRO_FILE_PWD_/../lib
+CONFIG(debug, debug|release)  {
+    DIR = $$DIR/debug
+}
+else: {
+    DIR = $$DIR/release
+}
+DIR ~= s,/,\\,g
+
+DESTDIR += $$DIR
+
+QMAKE_PRE_LINK  += if not exist $$DIR mkdir $$DIR & if not exist $$DIR exit 1
