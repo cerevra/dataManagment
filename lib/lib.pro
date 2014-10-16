@@ -14,14 +14,14 @@ TEMPLATE = lib
 CONFIG += staticlib
 CONFIG -= dll
 
-SOURCES += ../manager/calcalg.cpp
+SOURCES += ../host/calcalg.cpp
 
-HEADERS += ../manager/calcalg.h \
-           ../manager/iplugin.h
+HEADERS += ../host/calcalg.h \
+           ../host/iplugin.h
 
 QMAKE_CXXFLAGS += -std=c++0x
 
-INCLUDEPATH += ../manager
+INCLUDEPATH += ../host
 
 DIR = $$_PRO_FILE_PWD_/../lib
 CONFIG(debug, debug|release)  {

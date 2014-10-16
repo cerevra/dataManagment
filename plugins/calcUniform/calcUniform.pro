@@ -15,7 +15,7 @@ SOURCES += calcuniform.cpp \
 HEADERS += calcuniform.h \
     calcplugin.h
 
-INCLUDEPATH += ../../manager
+INCLUDEPATH += ../../host
 
 QMAKE_CXXFLAGS += -std=c++0x
 
