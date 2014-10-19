@@ -21,10 +21,11 @@ MainWindow::MainWindow(QWidget *parent)
     , m_scrollValue(0                       )
     , m_scene      (new QGraphicsScene(this))
     , m_sol        (nullptr                 )
+    , m_dlgPlugins (new Plugins       (this))
 {
     ui->setupUi(this);
 
-    loadPlugins();
+    ui->graphicsView->setScene(m_scene);
 
     onUnitCountSpinChanged(ui->spinBox_unitCount->value());
     connect(ui->spinBox_unitCount, SIGNAL(valueChanged          (int)) ,
@@ -35,7 +36,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton       , SIGNAL(clicked  ()),
             this                 , SLOT  (calculate()));
 
-    ui->graphicsView->setScene(m_scene);
+    connect(ui->action_plugins   , SIGNAL(triggered()),
+            m_dlgPlugins         , SLOT  (show     ()));
+    loadPlugins();
 
     connect(ui->comboBox         , SIGNAL(currentIndexChanged(int)),
             this                 , SLOT  (displayBrief(int)));
@@ -243,10 +246,21 @@ void MainWindow::loadPlugins()
     foreach(QString fileName, pluginsDir.entryList(QDir::Files))
     {
         loader.setFileName(pluginsDir.absoluteFilePath(fileName));
+        m_dlgPlugins->addPlugin(fileName);
+
         IPlugin* plugin = dynamic_cast<IPlugin*>(loader.instance());
         foreach(const QString& key, plugin->keys())
         {
-            m_algoritms.append(plugin->create(key));
+            Calculator* calc = plugin->create(key);
+            if (calc)
+            {
+                m_algoritms.append(calc);
+                m_dlgPlugins->addCalcAlg(key);
+            }
+            else
+                m_dlgPlugins->addCalcAlg(key, true);
         }
     }
+
+    m_dlgPlugins->expandAll();
 }

@@ -14,13 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    calcalg.cpp
+    calcalg.cpp \
+    plugins.cpp
 
 HEADERS  += mainwindow.h \
     calcalg.h \
-    iplugin.h
+    iplugin.h \
+    plugins.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    plugins.ui
 
 QMAKE_CXXFLAGS += -std=c++0x
 

@@ -6,6 +6,7 @@
 #include <QGraphicsView>
 
 #include "calcalg.h"
+#include "plugins.h"
 
 namespace Ui {
 class MainWindow;
@@ -47,6 +48,8 @@ private:
 
     static const QString   m_storageName;
 
+    Plugins*               m_dlgPlugins;
+
     struct Paint
     {
         Paint()
@@ -54,25 +57,25 @@ private:
             , penRed   (Qt::red   )
             , penYellow(Qt::yellow)
         {
-            unitLabelHeigth = fontHeigth     + fontMargin*2;
+            unitLabelHeigth = fontHeigth        + fontMargin*2;
             period          = storageRectHeigth + storageMargin + unitLabelHeigth;
 
             unitRectHeigth  = storageRectHeigth - unitRectYOffset*2
-                                             - lineWidthThin;
+                                                - lineWidthThin;
         }
 
         QPen penBlack;
         QPen penRed;
         QPen penYellow;
 
-        const int storageRectHeigth  = 57;
-        const int storageMargin      = 25;
-        const int fontHeigth         = 8;
-        const int fontMargin         = 10;
-        const int lineWidthWide      = 2;
-        const int lineWidthThin      = 1;
-        const int unitRectYOffset    = 2;
-        const int unitRectXOffset    = 2;
+        const int storageRectHeigth = 57;
+        const int storageMargin     = 25;
+        const int fontHeigth        = 8;
+        const int fontMargin        = 10;
+        const int lineWidthWide     = 2;
+        const int lineWidthThin     = 1;
+        const int unitRectYOffset   = 2;
+        const int unitRectXOffset   = 2;
         int unitLabelHeigth;
         int period;
         int unitRectHeigth;
