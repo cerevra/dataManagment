@@ -9,6 +9,8 @@ Plugins::Plugins(QWidget *parent) :
     ui->setupUi(this);
 
     ui->treeView->setModel(&m_model);
+
+    this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 Plugins::~Plugins()

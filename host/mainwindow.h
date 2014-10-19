@@ -7,6 +7,7 @@
 
 #include "calcalg.h"
 #include "plugins.h"
+#include "about.h"
 
 namespace Ui {
 class MainWindow;
@@ -49,6 +50,7 @@ private:
     static const QString   m_storageName;
 
     Plugins*               m_dlgPlugins;
+    About*                 m_dlgAbout;
 
     struct Paint
     {

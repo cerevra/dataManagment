@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_scene      (new QGraphicsScene(this))
     , m_sol        (nullptr                 )
     , m_dlgPlugins (new Plugins       (this))
+    , m_dlgAbout   (new About         (this))
 {
     ui->setupUi(this);
 
@@ -35,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->pushButton       , SIGNAL(clicked  ()),
             this                 , SLOT  (calculate()));
+
+    connect(ui->action_about     , SIGNAL(triggered()),
+            m_dlgAbout           , SLOT  (show     ()));
 
     connect(ui->action_plugins   , SIGNAL(triggered()),
             m_dlgPlugins         , SLOT  (show     ()));
