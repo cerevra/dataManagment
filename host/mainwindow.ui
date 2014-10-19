@@ -153,14 +153,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_arcsCount">
+          <widget class="QLabel" name="label_storagesCount">
            <property name="text">
             <string>Количество хранилищ</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_arcCount">
+          <widget class="QSpinBox" name="spinBox_storageCount">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -173,7 +173,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_arcsCapacity">
+          <widget class="QLabel" name="label_storagesCapacity">
            <property name="text">
             <string>Объем хранилища</string>
            </property>
@@ -188,7 +188,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_arcCapacity">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_storageCapacity">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -213,7 +213,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_arc_gb">
+            <widget class="QLabel" name="label_storage_gb">
              <property name="text">
               <string>Гб</string>
              </property>
@@ -222,14 +222,14 @@
           </layout>
          </item>
          <item>
-          <widget class="QLabel" name="label_kpCount">
+          <widget class="QLabel" name="label_unitCount">
            <property name="text">
             <string>Количество КП</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_kpCount">
+          <widget class="QSpinBox" name="spinBox_unitCount">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -253,13 +253,13 @@
         </layout>
         <zorder>pushButton</zorder>
         <zorder>comboBox</zorder>
-        <zorder>label_arcsCount</zorder>
-        <zorder>spinBox_arcCount</zorder>
-        <zorder>label_arcsCapacity</zorder>
-        <zorder>spinBox_kpCount</zorder>
-        <zorder>label_kpCount</zorder>
+        <zorder>label_storagesCount</zorder>
+        <zorder>spinBox_storageCount</zorder>
+        <zorder>label_storagesCapacity</zorder>
+        <zorder>spinBox_unitCount</zorder>
+        <zorder>label_unitCount</zorder>
        </widget>
-       <widget class="QWidget" name="widget_kpCapacities" native="true">
+       <widget class="QWidget" name="widget_unitCapacities" native="true">
         <property name="geometry">
          <rect>
           <x>0</x>

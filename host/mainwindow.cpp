@@ -12,12 +12,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-const QString MainWindow::m_bankName = "Хранилище №";
+const QString MainWindow::m_storageName = "Хранилище №";
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow  (parent                  )
     , ui           (new Ui::MainWindow      )
-    , m_kpCount    (0                       )
+    , m_unitCount  (0                       )
     , m_scrollValue(0                       )
     , m_scene      (new QGraphicsScene(this))
     , m_sol        (nullptr                 )
@@ -26,9 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     loadPlugins();
 
-    onKpCountSpinChanged(ui->spinBox_kpCount->value());
-    connect(ui->spinBox_kpCount  , SIGNAL(valueChanged        (int)) ,
-            this                 , SLOT  (onKpCountSpinChanged(int)));
+    onUnitCountSpinChanged(ui->spinBox_unitCount->value());
+    connect(ui->spinBox_unitCount, SIGNAL(valueChanged          (int)) ,
+            this                 , SLOT  (onUnitCountSpinChanged(int)));
     connect(ui->verticalScrollBar, SIGNAL(valueChanged(int)),
             this                 , SLOT  (scrollDock  (int)));
 
@@ -47,9 +47,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    for(int i = 0; i < m_kpCount; ++i)
+    for(int i = 0; i < m_unitCount; ++i)
     {
-        QDoubleSpinBox* spinBox = m_kpCapacitiesSpins[i];
+        QDoubleSpinBox* spinBox = m_unitCapacitiesSpins[i];
         ui->formLayout->labelForField(spinBox)->deleteLater();
         spinBox->deleteLater();
     }
@@ -64,40 +64,40 @@ MainWindow::~MainWindow()
     delete m_sol;
 }
 
-void MainWindow::onKpCountSpinChanged(int count)
+void MainWindow::onUnitCountSpinChanged(int count)
 {
-    if (count < m_kpCount)
+    if (count < m_unitCount)
     {
-        for(int i = m_kpCount - 1; i > count - 1; --i)
+        for(int i = m_unitCount - 1; i > count - 1; --i)
         {
-            QDoubleSpinBox* spinBox = m_kpCapacitiesSpins[i];
+            QDoubleSpinBox* spinBox = m_unitCapacitiesSpins[i];
             ui->formLayout->labelForField(spinBox)->deleteLater();
             spinBox->deleteLater();
-            m_kpCapacitiesSpins.removeAt(i);
+            m_unitCapacitiesSpins.removeAt(i);
         }
     }
-    else if (count > m_kpCount)
+    else if (count > m_unitCount)
     {
-        for(int i = m_kpCount; i < count; ++i)
+        for(int i = m_unitCount; i < count; ++i)
         {
             QDoubleSpinBox* spinBox = new QDoubleSpinBox(this);
             spinBox->setValue  (2);
             spinBox->setMinimum(0.01);
             ui->formLayout->addRow(QString("№%1").arg(i+1),spinBox);
-            m_kpCapacitiesSpins.append(spinBox);
+            m_unitCapacitiesSpins.append(spinBox);
         }
     }
 
-    QRect geometry = ui->widget_kpCapacities->geometry();
-    ui->widget_kpCapacities->setGeometry(
+    QRect geometry = ui->widget_unitCapacities->geometry();
+    ui->widget_unitCapacities->setGeometry(
         QRect(geometry.topLeft(),
               QSize(geometry.width(),
-                    (  ui->spinBox_kpCount->height         ()
+                    (  ui->spinBox_unitCount->height       ()
                      + ui->formLayout     ->verticalSpacing())*count
                      + 20 // из-за разницы размеров виджета и formLayout
                                        )));
 
-    m_kpCount = count;
+    m_unitCount = count;
 
     resizeScroll();
 }
@@ -121,14 +121,14 @@ void MainWindow::calculate()
         return;
 
     QScopedPointer<Calculator> calc(m_algoritms[ui->comboBox->currentIndex()]->clone());
-    QList<double> kpCapacities;
+    QList<double> unitCapacities;
 
-    for(int i = 0; i < m_kpCount; ++i)
-        kpCapacities.append(m_kpCapacitiesSpins[i]->value());
+    for(int i = 0; i < m_unitCount; ++i)
+        unitCapacities.append(m_unitCapacitiesSpins[i]  ->value());
 
-    m_sol = calc->calc(ui->spinBox_arcCount         ->value(),
-                       ui->doubleSpinBox_arcCapacity->value(),
-                       kpCapacities);
+    m_sol = calc->calc(ui->spinBox_storageCount         ->value(),
+                       ui->doubleSpinBox_storageCapacity->value(),
+                       unitCapacities);
 
     draw();
 }
@@ -143,8 +143,8 @@ void MainWindow::resizeScroll()
 {
     ui->verticalScrollBar->setMinimum(0);
 
-    int max = ui->widget_kpCapacities->y     () - ui->frame->y     ()
-            + ui->widget_kpCapacities->height() - ui->frame->height();
+    int max = ui->widget_unitCapacities->y     () - ui->frame->y     ()
+            + ui->widget_unitCapacities->height() - ui->frame->height();
     if (max < 0)
         max = 0;
 
@@ -158,25 +158,25 @@ void MainWindow::draw()
 
     m_scene->clear();
 
-    double bankCapacity  = ui->doubleSpinBox_arcCapacity->value();
-    int    bankCount     = ui->spinBox_arcCount         ->value();
-    int    bankNameWidth = QFontMetrics(font()).width(QString("%1%2")
-                                                   .arg(m_bankName)
-                                                   .arg(bankCount));
+    double storageCapacity  = ui->doubleSpinBox_storageCapacity->value();
+    int    storageCount     = ui->spinBox_storageCount         ->value();
+    int    storageNameWidth = QFontMetrics(font()).width(QString("%1%2")
+                                                   .arg(m_storageName)
+                                                   .arg(storageCount));
 
-    int bankRectOffset   = bankNameWidth + 2*m_pnt.fontMargin;
-    int bankRectWidth    = ui->graphicsView->width() - (bankNameWidth + 3*m_pnt.fontMargin);
-    int allowedUnitWidth = bankRectWidth - 2*m_pnt.lineWidthWide;
+    int storageRectOffset   = storageNameWidth + 2*m_pnt.fontMargin;
+    int storageRectWidth    = ui->graphicsView->width() - (storageNameWidth + 3*m_pnt.fontMargin);
+    int allowedUnitWidth = storageRectWidth - 2*m_pnt.lineWidthWide;
 
-    for (int bankIdx = 0; bankIdx < m_sol->size(); ++bankIdx)
+    for (int storageIdx = 0; storageIdx < m_sol->size(); ++storageIdx)
     {
-        double bankSize    = m_sol->at(bankIdx).size();
-        double bankMaxSize = ui->doubleSpinBox_arcCapacity->value();
-        double usage       = bankSize/bankMaxSize;
+        double storageSize    = m_sol->at(storageIdx).size();
+        double storageMaxSize = ui->doubleSpinBox_storageCapacity->value();
+        double usage       = storageSize/storageMaxSize;
 
         QPen* outlinePen;
 
-        if (bankIdx >= bankCount || usage >= 1.0)
+        if (storageIdx >= storageCount || usage >= 1.0)
             outlinePen = &m_pnt.penRed;
         else if (usage > 0.9 && usage < 1.0)
             outlinePen = &m_pnt.penYellow;
@@ -186,40 +186,40 @@ void MainWindow::draw()
         outlinePen->setWidth(m_pnt.lineWidthWide);
 
         // Хранилище
-        QGraphicsTextItem* bankLabel = m_scene->addText(QString("%1%2")
-                                                        .arg(m_bankName)
-                                                        .arg(bankIdx+1));
-        QGraphicsTextItem* bankUsage = m_scene->addText(QString("%1%\n%2/%3")
-                                                        .arg(usage*100  , 0, 'g', 3)
-                                                        .arg(bankSize   , 0, 'g', 4)
-                                                        .arg(bankMaxSize, 0, 'g', 4));
-        int yOffset = m_pnt.unitLabelHeigth + bankIdx*m_pnt.period;
-        bankLabel->setPos (m_pnt.fontMargin, yOffset);
-        bankUsage->setPos (m_pnt.fontMargin, yOffset + m_pnt.unitLabelHeigth);
-        m_scene  ->addRect(bankRectOffset, yOffset,
-                           bankRectWidth , m_pnt.bankRectHeigth, *outlinePen);
+        QGraphicsTextItem* storageLabel = m_scene->addText(QString("%1%2")
+                                                        .arg(m_storageName)
+                                                        .arg(storageIdx+1));
+        QGraphicsTextItem* storageUsage = m_scene->addText(QString("%1%\n%2/%3")
+                                                        .arg(usage*100     , 0, 'g', 3)
+                                                        .arg(storageSize   , 0, 'g', 4)
+                                                        .arg(storageMaxSize, 0, 'g', 4));
+        int yOffset = m_pnt.unitLabelHeigth + storageIdx*m_pnt.period;
+        storageLabel->setPos (m_pnt.fontMargin, yOffset);
+        storageUsage->setPos (m_pnt.fontMargin, yOffset + m_pnt.unitLabelHeigth);
+        m_scene  ->addRect(storageRectOffset, yOffset,
+                           storageRectWidth , m_pnt.storageRectHeigth, *outlinePen);
 
         // Блоки данных
         outlinePen->setWidth(m_pnt.lineWidthThin);
 
-        int xOffset = bankRectOffset;
-        const Units* units = m_sol->at(bankIdx).units();
+        int xOffset = storageRectOffset;
+        const Units* units = m_sol->at(storageIdx).units();
         for (int unitIdx = 0; unitIdx < units->size(); ++unitIdx)
         {
             int unitNo = units->at(unitIdx);
             int unitLableOffset;
             if (unitIdx%2)
             {
-                unitLableOffset = yOffset + m_pnt.bankRectHeigth + m_pnt.fontMargin;
+                unitLableOffset = yOffset + m_pnt.storageRectHeigth + m_pnt.fontMargin;
             }
             else
             {
                 unitLableOffset = yOffset - (m_pnt.fontHeigth + m_pnt.fontMargin);
             }
 
-            double unitRectWidth = m_kpCapacitiesSpins.at(unitNo)->value()*
+            double unitRectWidth = m_unitCapacitiesSpins.at(unitNo)->value()*
                                    allowedUnitWidth/
-                                   bankCapacity;
+                                   storageCapacity;
 
             m_scene->addRect(xOffset + m_pnt.unitRectXOffset,
                              yOffset + m_pnt.unitRectYOffset,

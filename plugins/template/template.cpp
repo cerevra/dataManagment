@@ -22,7 +22,7 @@ Calculator *TemplateCalc::clone()
     return new TemplateCalc();
 }
 
-Solution* TemplateCalc::calc(int arcCount, double arcCapacity, QList<qreal> &kpCapacities)
+Solution* TemplateCalc::calc(int storageCount, double storageCapacity, QList<qreal> &unitCapacities)
 {
     return m_sol;
 }

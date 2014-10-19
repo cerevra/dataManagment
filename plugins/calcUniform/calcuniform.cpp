@@ -1,7 +1,7 @@
 #include "calcuniform.h"
 
 CalcUniform::CalcUniform()
-    : m_arcCapacity(0)
+    : m_storageCapacity(0)
 {
     m_sol = new Solution;
 }
@@ -26,15 +26,15 @@ Calculator *CalcUniform::clone()
     return new CalcUniform();
 }
 
-Solution* CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCapacities)
+Solution* CalcUniform::calc(int storageCount, double storageCapacity, QList<qreal> &unitCapacities)
 {
-    m_sol->resize(arcCount);
-    m_arcCapacity = arcCapacity;
+    m_sol->resize(storageCount);
+    m_storageCapacity = storageCapacity;
 
     //сортировка
-    for (int i = 0; i < kpCapacities.size(); ++i)
+    for (int i = 0; i < unitCapacities.size(); ++i)
     {
-        m_orderedCapacities.insert(kpCapacities[i], i);
+        m_orderedCapacities.insert(unitCapacities[i], i);
     }
 
     try
@@ -43,13 +43,13 @@ Solution* CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCa
         while (m_orderedCapacities.size())
         {
             bool result = false;
-            for (int i = 0; i < arcCount; ++i)
+            for (int i = 0; i < storageCount; ++i)
             {
                 if (routine((*m_sol)[i]))
                     result = true;
             }
 
-            for (int i = arcCount-1; i >= 0; --i)
+            for (int i = storageCount-1; i >= 0; --i)
             {
                 if (routine((*m_sol)[i]))
                     result = true;
@@ -66,18 +66,18 @@ Solution* CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCa
     // если не для всех узлов нашлось место
     if (m_orderedCapacities.size())
     {
-        Bank* bank = &m_sol->last();
+        Storage* storage = &m_sol->last();
         while(m_orderedCapacities.size())
         {
             double capacity = m_orderedCapacities.lastKey();
-            if (bank->size() + capacity >= m_arcCapacity)
+            if (storage->size() + capacity >= m_storageCapacity)
             {
-                m_sol->append(Bank());
-                bank = &m_sol->last();
+                m_sol->append(Storage());
+                storage = &m_sol->last();
             }
 
             int unitNo = m_orderedCapacities.last();
-            bank->append(unitNo, capacity);
+            storage->append(unitNo, capacity);
             m_orderedCapacities.remove(capacity, unitNo);
         }
     }
@@ -85,15 +85,15 @@ Solution* CalcUniform::calc(int arcCount, double arcCapacity, QList<qreal> &kpCa
     return m_sol;
 }
 
-bool CalcUniform::routine(Bank &bank)
+bool CalcUniform::routine(Storage &storage)
 {
     if (m_orderedCapacities.size())
     {
         double capacity = m_orderedCapacities.lastKey();
-        if (bank.size() + capacity < m_arcCapacity)
+        if (storage.size() + capacity < m_storageCapacity)
         {
             int unitNo = m_orderedCapacities.last();
-            bank.append(unitNo, capacity);
+            storage.append(unitNo, capacity);
             m_orderedCapacities.remove(capacity, unitNo);
             return true;
         }
