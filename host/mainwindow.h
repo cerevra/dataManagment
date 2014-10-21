@@ -6,6 +6,8 @@
 #include <QGraphicsView>
 
 #include "calcalg.h"
+#include "plugins.h"
+#include "about.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,23 +22,23 @@ public:
     ~MainWindow();
 
 public slots:
-    void onKpCountSpinChanged(int count);
-    void scrollDock          (int value);
-    void resizeEvent         (QResizeEvent *);
+    void onUnitCountSpinChanged(int count);
+    void scrollDock            (int value);
+    void resizeEvent           (QResizeEvent *);
 
-    void calculate           ();
-    void displayBrief        (int index);
+    void calculate             ();
+    void displayBrief          (int index);
 
 private:
-    void resizeScroll        ();
-    void draw                ();
+    void resizeScroll          ();
+    void draw                  ();
 
-    void loadPlugins         ();
+    void loadPlugins           ();
 
     Ui::MainWindow *ui;
 
-    int                    m_kpCount;
-    QList<QDoubleSpinBox*> m_kpCapacitiesSpins;
+    int                    m_unitCount;
+    QList<QDoubleSpinBox*> m_unitCapacitiesSpins;
 
     int                    m_scrollValue;
 
@@ -45,7 +47,10 @@ private:
     QVector<Calculator*>   m_algoritms;
     Solution*              m_sol;
 
-    static const QString   m_bankName;
+    static const QString   m_storageName;
+
+    Plugins*               m_dlgPlugins;
+    About*                 m_dlgAbout;
 
     struct Paint
     {
@@ -54,25 +59,25 @@ private:
             , penRed   (Qt::red   )
             , penYellow(Qt::yellow)
         {
-            unitLabelHeigth = fontHeigth     + fontMargin*2;
-            period          = bankRectHeigth + bankMargin + unitLabelHeigth;
+            unitLabelHeigth = fontHeigth        + fontMargin*2;
+            period          = storageRectHeigth + storageMargin + unitLabelHeigth;
 
-            unitRectHeigth  = bankRectHeigth - unitRectYOffset*2
-                                             - lineWidthThin;
+            unitRectHeigth  = storageRectHeigth - unitRectYOffset*2
+                                                - lineWidthThin;
         }
 
         QPen penBlack;
         QPen penRed;
         QPen penYellow;
 
-        const int bankRectHeigth  = 57;
-        const int bankMargin      = 25;
-        const int fontHeigth      = 8;
-        const int fontMargin      = 10;
-        const int lineWidthWide   = 2;
-        const int lineWidthThin   = 1;
-        const int unitRectYOffset = 2;
-        const int unitRectXOffset = 2;
+        const int storageRectHeigth = 57;
+        const int storageMargin     = 25;
+        const int fontHeigth        = 8;
+        const int fontMargin        = 10;
+        const int lineWidthWide     = 2;
+        const int lineWidthThin     = 1;
+        const int unitRectYOffset   = 2;
+        const int unitRectXOffset   = 2;
         int unitLabelHeigth;
         int period;
         int unitRectHeigth;

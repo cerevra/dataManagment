@@ -17,9 +17,9 @@ public:
     QString     brief();
     Calculator* clone();
 
-    Solution*   calc (int arcCount,
-                      double arcCapacity,
-                      QList<qreal>& kpCapacities);
+    Solution*   calc (int storageCount,
+                      double storageCapacity,
+                      QList<qreal>& unitCapacities);
 
 private:
 };
