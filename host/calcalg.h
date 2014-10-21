@@ -6,14 +6,15 @@
 
 typedef QVector<int> Units;
 
-class Bank
+class Storage
 {
 public:
-    Bank();
+    Storage();
 
     void         append(int unitNo, double unitSize);
 
-    const Units* units ();
+    const Units* units () const;
+    int          size  () const;
 
 private:
     int   m_size;
@@ -21,7 +22,7 @@ private:
 };
 
 // паттерн Strategy
-typedef QVector<Bank> Solution;
+typedef QVector<Storage> Solution;
 
 class Calculator
 {
@@ -29,11 +30,13 @@ public:
     Calculator               () {}
     virtual ~Calculator      () {}
 
-    virtual QString  name    () = 0;
-    virtual QString  brief   () = 0;
+    virtual QString     name () = 0;
+    virtual QString     brief() = 0;
     virtual Calculator* clone() = 0;
 
-    virtual Solution* calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities) = 0;
+    virtual Solution*   calc (int           storageCount,
+                              double        storageCapacity,
+                              QList<qreal>& unitCapacities) = 0;
 
 protected:
     Solution* m_sol;

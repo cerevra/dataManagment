@@ -13,17 +13,19 @@ public:
     CalcUniform      ();
     ~CalcUniform     () {}
 
-    QString  name    ();
-    QString  brief   ();
+    QString     name ();
+    QString     brief();
     Calculator* clone();
 
-    Solution* calc (int arcCount, double arcCapacity, QList<qreal>& kpCapacities);
+    Solution*   calc (int storageCount,
+                      double storageCapacity,
+                      QList<qreal>& unitCapacities);
 
 private:
-    bool routine  (Bank& bank);
+    bool routine(Storage& storage);
 
     Ordered  m_orderedCapacities;
-    double   m_arcCapacity;
+    double   m_storageCapacity;
 };
 
 #endif // CALCUNIFORM_H

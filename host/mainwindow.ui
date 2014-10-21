@@ -153,14 +153,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_arcsCount">
+          <widget class="QLabel" name="label_storagesCount">
            <property name="text">
             <string>Количество хранилищ</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_arcCount">
+          <widget class="QSpinBox" name="spinBox_storageCount">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -173,7 +173,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_arcsCapacity">
+          <widget class="QLabel" name="label_storagesCapacity">
            <property name="text">
             <string>Объем хранилища</string>
            </property>
@@ -188,7 +188,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_arcCapacity">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_storageCapacity">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -213,7 +213,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_arc_gb">
+            <widget class="QLabel" name="label_storage_gb">
              <property name="text">
               <string>Гб</string>
              </property>
@@ -222,14 +222,14 @@
           </layout>
          </item>
          <item>
-          <widget class="QLabel" name="label_kpCount">
+          <widget class="QLabel" name="label_unitCount">
            <property name="text">
             <string>Количество КП</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_kpCount">
+          <widget class="QSpinBox" name="spinBox_unitCount">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -253,13 +253,13 @@
         </layout>
         <zorder>pushButton</zorder>
         <zorder>comboBox</zorder>
-        <zorder>label_arcsCount</zorder>
-        <zorder>spinBox_arcCount</zorder>
-        <zorder>label_arcsCapacity</zorder>
-        <zorder>spinBox_kpCount</zorder>
-        <zorder>label_kpCount</zorder>
+        <zorder>label_storagesCount</zorder>
+        <zorder>spinBox_storageCount</zorder>
+        <zorder>label_storagesCapacity</zorder>
+        <zorder>spinBox_unitCount</zorder>
+        <zorder>label_unitCount</zorder>
        </widget>
-       <widget class="QWidget" name="widget_kpCapacities" native="true">
+       <widget class="QWidget" name="widget_unitCapacities" native="true">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -302,8 +302,65 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>841</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_main">
+    <property name="title">
+     <string>Меню</string>
+    </property>
+    <addaction name="action_plugins"/>
+    <addaction name="action_exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_etc">
+    <property name="title">
+     <string>?</string>
+    </property>
+    <addaction name="action_about"/>
+   </widget>
+   <addaction name="menu_main"/>
+   <addaction name="menu_etc"/>
+  </widget>
+  <action name="action_plugins">
+   <property name="text">
+    <string>Плагины</string>
+   </property>
+  </action>
+  <action name="action_exit">
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="action_about">
+   <property name="text">
+    <string>О программе</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>action_exit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
