@@ -34,4 +34,5 @@ DIR ~= s,/,\\,g
 
 DESTDIR += $$DIR
 
-QMAKE_PRE_LINK  += if not exist $$DIR mkdir $$DIR & if not exist $$DIR exit 1
+exists($$DIR): {}
+else: QMAKE_PRE_LINK  += & mkdir \"$$DIR\" & if not exist \"$$DIR\" exit 1
