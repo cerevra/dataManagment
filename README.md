@@ -17,7 +17,3 @@ e-mail: cerevra@gmail.com
 
 Для сборки понадобится переменная среды
 QT_DIR = c:\Qt\5.3\mingw482_32\ (например)
-
-=====
-
-bin: https://sourceforge.net/projects/datamanagment/
