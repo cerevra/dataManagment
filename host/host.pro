@@ -33,7 +33,6 @@ QMAKE_CXXFLAGS += -std=c++0x
 # Deploying
 
 DIR = $$_PRO_FILE_PWD_/../bin
-win: DIR ~= s,/,\\,g
 
 QMAKE_PRE_LINK = echo
 exists($$DIR): {}
@@ -45,49 +44,50 @@ CONFIG(debug, debug|release)  {
 else: {
     DIR = $$DIR/release
 }
-win: DIR ~= s,/,\\,g
 
 exists($$DIR): {}
 else: QMAKE_PRE_LINK  += & mkdir \"$$DIR\"
 
 DESTDIR += $$DIR
 
-DLLS = icudt52 \
-    icuin52 \
-    icuuc52 \
-    libgcc_s_dw2-1 \
-    libstdc++-6 \
-    libwinpthread-1
+DLLS = $$system(copy.bat)
 
-CONFIG(release, debug|release)  {
-    DLLS += Qt5Core \
+DLLS_tmp += Qt5Core \
             Qt5Gui \
             Qt5Widgets
 
-    DLL_PLATFORM = qminimal \
+DLL_PLATFORM_tmp = qminimal \
                    qoffscreen \
                    qwindows
+
+CONFIG(release, debug|release)  {
+    for (d, DLLS_tmp): {
+        DLLS += $${d}.dll
+    }
+
+    for (d, DLL_PLATFORM_tmp): {
+        DLL_PLATFORM += $${d}.dll
+    }
 }
 else: {
-    DLLS += Qt5Cored \
-            Qt5Guid \
-            Qt5Widgetsd
+    for (d, DLLS_tmp): {
+        DLLS += $${d}d.dll
+    }
 
-    DLL_PLATFORM = qminimald \
-                   qoffscreend \
-                   qwindowsd
+    for (d, DLL_PLATFORM_tmp): {
+        DLL_PLATFORM += $${d}d.dll
+    }
 }
 
 QMAKE_POST_LINK = echo
 for (d, DLLS): {
-QMAKE_POST_LINK += & copy /y \"$(QT_DIR)\bin\\$${d}.dll\" \"$$DIR\\$${d}.dll\"
+QMAKE_POST_LINK += & copy /y \"$(QT_DIR)\bin\\$${d}\" \"$$DIR\\$${d}\"
 }
 
 DIR = $$DIR/platforms
-win: DIR ~= s,/,\\,g
 exists($$DIR): {}
 else: QMAKE_PRE_LINK  += & mkdir \"$$DIR\" & if not exist \"$$DIR\" exit 1
 
 for (d, DLL_PLATFORM): {
-QMAKE_POST_LINK += & copy /y \"$(QT_DIR)\plugins\\platforms\\$${d}.dll\" \"$$DIR\\$${d}.dll\"
+QMAKE_POST_LINK += & copy /y \"$(QT_DIR)\plugins\\platforms\\$${d}\" \"$$DIR\\$${d}\"
 }
